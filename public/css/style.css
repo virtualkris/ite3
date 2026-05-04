@@ -1,0 +1,31 @@
+:root {
+    --primary: #007bff;
+    --background: #f8f9fa;
+    --card: #ffffff;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+body {
+    background-color: white;
+}
+
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    body {
+        background-color: #89c4f8;
+    }
+}
+
+.nav {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}

@@ -1,0 +1,11 @@
+# 1. Enable the Rewriting Engine
+RewriteEngine On
+
+# 2. If the user is requesting a real file (like an image or CSS), serve it
+RewriteCond %{REQUEST_FILENAME} !-f
+
+# 3. If the user is requesting a real folder, serve it
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# 4. Otherwise, send the entire URL path to public/index.php
+RewriteRule ^(.*)$ public/index.php [L,QSA]
