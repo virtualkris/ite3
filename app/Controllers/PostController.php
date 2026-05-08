@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\Post;
+use App\Helpers\Validator;
 
 class PostController extends Controller {
     // Class implementation
@@ -42,10 +43,20 @@ class PostController extends Controller {
         $title = $_POST['title'];
         $content = $_POST['content'];
 
-        if (!empty($title) && !empty($content)) {
-            $postModel = new Post();
-            $postModel->create($title, $content);
+        Validator::clearErrors();
+        Validator::required('title', $title);
+        Validator::required('content', $content);
+
+        if (Validator::getErrors()) {
+            return $this->render('create', [
+                'title' => 'Create New Post',
+                'errors' => Validator::getErrors(),
+                'old' => $_POST // Pass old input back to the view for repopulation
+            ]);
         }
+
+        $postModel = new Post();
+        $postModel->create($title, $content);
 
         header('Location: /ite3/home');
         exit;
