@@ -6,10 +6,10 @@ class Database {
 
     public static function getConnection() {
         if (!self::$instance) {
-            $host = 'localhost';
-            $db = 'devblog_db';
-            $user = 'root';
-            $pass = '';
+            $host = $_ENV['DB_HOST'] ?? 'localhost';
+            $db = $_ENV['DB_NAME'] ?? 'devblog_db';
+            $user = $_ENV['DB_USER'] ?? 'root';
+            $pass = $_ENV['DB_PASS'] ?? '';
             $charset = 'utf8mb4';
 
             $dsn = "mysql:host=$host;dbname=$db;charset=$charset";

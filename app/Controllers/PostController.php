@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\Post;
 use App\Helpers\Validator;
+use App\Services\PostService;
 
 class PostController extends Controller {
     // Class implementation
@@ -25,12 +26,6 @@ class PostController extends Controller {
 
     public function create() {
         $this->checkAuth();
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $postModel = new Post();
-            $postModel->create($_POST['title'], $_POST['content']);
-            header('Location: /');
-            exit;
-        }
 
         $this->render('create', [
             'title' => 'Create New Post'
@@ -55,8 +50,10 @@ class PostController extends Controller {
             ]);
         }
 
+        $slug = PostService::generateSlug($title);
+
         $postModel = new Post();
-        $postModel->create($title, $content);
+        $postModel->create($title, $slug, $content);
 
         header('Location: /ite3/home');
         exit;
@@ -80,14 +77,29 @@ class PostController extends Controller {
 
     public function update() {
         $this->checkAuth();
+
         $id = $_POST['id'];
         $title = $_POST['title'];
         $content = $_POST['content'];
 
-        if (!empty($id) && !empty($title) && !empty($content)) {
+        Validator::clearErrors();
+        Validator::required('title', $title);
+        Validator::required('content', $content);
+
+        if (Validator::getErrors()) {
             $postModel = new Post();
-            $postModel->update($id, $title, $content);
+            $post = $postModel->find($id);
+            return $this->render('post-edit', [
+                'title' => 'Edit Post',
+                'post' => $post,
+                'errors' => Validator::getErrors()
+            ]);
         }
+
+        $slug = PostService::generateSlug($title);
+
+        $postModel = new Post();
+        $postModel->update($id, $title, $slug, $content);
 
         header('Location: /ite3/home');
         exit;

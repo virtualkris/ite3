@@ -22,6 +22,22 @@ class Validator {
         return true;
     }
 
+    //Check if a value is numeric
+    public static function numeric($fieldName, $value) {
+        $value = trim($value);
+
+        if ($value === '') {
+            return true;
+        }
+
+        if (!is_numeric($value)) {
+            self::$errors[$fieldName] = ucfirst($fieldName) . " must be a number!";
+            return false;
+        }
+
+        return true;
+    }
+
     //Get validation errors
     public static function getErrors() {
         return self::$errors;

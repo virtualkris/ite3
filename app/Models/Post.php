@@ -15,19 +15,21 @@ class Post extends Model {
         return $stmt->fetch();
     }
 
-    public function create($title, $content) {
-        $stmt = $this->db->prepare("INSERT INTO posts (title, content) VALUES (?, ?)");
+    public function create($title, $slug, $content) {
+        $stmt = $this->db->prepare("INSERT INTO posts (title, slug, content) VALUES (?, ?, ?)");
         return $stmt->execute([
             $title,
+            $slug,
             $content
         ]);
     }
 
 
-    public function update($id, $title, $content) {
-        $stmt = $this->db->prepare("UPDATE posts SET title = ?, content = ? WHERE id = ?");
+    public function update($id, $title, $slug, $content) {
+        $stmt = $this->db->prepare("UPDATE posts SET title = ?, slug = ?, content = ? WHERE id = ?");
         return $stmt->execute([
             $title,
+            $slug,
             $content,
             $id
         ]);
