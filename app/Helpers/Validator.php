@@ -43,6 +43,10 @@ class Validator {
         return self::$errors;
     }
 
+    public static function hasErrors() {
+        return !empty(self::$errors);
+    }
+
     //Clear validation errors
     public static function clearErrors() {
         self::$errors = [];

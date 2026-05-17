@@ -2,35 +2,41 @@
 namespace App\Controllers;
 
 use App\Models\User;
+use App\Helpers\Validator;
 
 class AuthController extends Controller {
+    public function showLoginForm() {
+        return $this->render('login');
+    }
+
     public function login() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $username = $_POST['username'];
-            $password = $_POST['password'];
+        $username = $_POST['username'] ?? '';
+        $password = $_POST['password'] ?? '';
 
-            $userModel = new User();
-            $user = $userModel->findByUsername($username);
+        Validator::clearErrors();
+        Validator::required('username', $username);
+        Validator::required('password', $password);
 
-            if ($user && password_verify($password, $user['password'])) {
-                // Authentication successful
-                $_SESSION['user_id'] = $user['id'];
-                header('Location: /ite3/home');
-                exit;
-            } else {
-                // Authentication failed
-                $this->render('login', [
-                    'title' => 'Login',
-                    'error' => 'Invalid username or password'
-                ]);
-                return;
-            }
+        if (Validator::getErrors()) {
+            return $this->render('login', [
+                'errors' => Validator::getErrors()
+            ]);
         }
 
-        // Show the login form
-        $this->render('login', [
-            'title' => 'Login'
+        $userModel = new User();
+        $user = $userModel->findByUsername($username);
+
+        if ($user && password_verify($password, $user['password'])) {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
+            header('Location: /ite3/home');
+            exit;
+        }
+
+        return $this->render('login', [
+            'errors' => ['auth' => 'Invalid username or password!']
         ]);
+        
     }
 
     public function logout() {

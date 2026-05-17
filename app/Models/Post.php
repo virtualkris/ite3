@@ -15,6 +15,12 @@ class Post extends Model {
         return $stmt->fetch();
     }
 
+    public function findBySlug($slug) {
+        $stmt = $this->db->prepare("SELECT * FROM posts WHERE slug = ?");
+        $stmt->execute([$slug]);
+        return $stmt->fetch();
+    }
+
     public function create($title, $slug, $content) {
         $stmt = $this->db->prepare("INSERT INTO posts (title, slug, content) VALUES (?, ?, ?)");
         return $stmt->execute([

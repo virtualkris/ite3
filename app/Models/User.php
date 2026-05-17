@@ -1,8 +1,7 @@
 <?php
 namespace App\Models;
 
-class User extends Model
-{
+class User extends Model {
     public function findByUsername($username) {
         $stmt = $this->db->prepare("SELECT * FROM users WHERE username = ?");
         $stmt->execute([$username]);

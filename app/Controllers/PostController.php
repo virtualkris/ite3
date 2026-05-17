@@ -32,6 +32,22 @@ class PostController extends Controller {
         ]);
     }
 
+    public function show($slug) {
+        $postModel = new Post();
+        $post = $postModel->findBySlug($slug);
+
+        if (!$post) {
+            http_response_code(404);
+            echo "Post not found.";
+            return;
+        }
+
+        $this->render('post-show', [
+            'title' => $post['title'],
+            'post' => $post
+        ]);
+    }
+
     public function store() {
         $this->checkAuth();
         // This method can be used for handling form submissions if needed
@@ -55,16 +71,20 @@ class PostController extends Controller {
         $postModel = new Post();
         $postModel->create($title, $slug, $content);
 
+        $_SESSION['flash'] = "Success! Action completed.";
         header('Location: /ite3/home');
         exit;
+
+        
     }
 
-    public function edit($id) {
+    public function edit($slug) {
         $this->checkAuth();
         $postModel = new Post();
-        $post = $postModel->find($id);
+        $post = $postModel->findBySlug($slug);
 
         if (!$post) {
+            http_response_code(404);
             echo "Post not found.";
             return;
         }
@@ -101,15 +121,25 @@ class PostController extends Controller {
         $postModel = new Post();
         $postModel->update($id, $title, $slug, $content);
 
+        $_SESSION['flash'] = "Success! Action completed.";
         header('Location: /ite3/home');
         exit;
     }
 
-    public function delete($id) {
+    public function delete($id = null) {
         $this->checkAuth();
+
+        $id = $id ?? ($_POST['id'] ?? null);
+        if (!$id) {
+            http_response_code(400);
+            echo "Post id is required.";
+            return;
+        }
+
         $postModel = new Post();
         $postModel->delete($id);
 
+        $_SESSION['flash'] = "Post deleted successfully!";
         header('Location: /ite3/home');
         exit;
     }

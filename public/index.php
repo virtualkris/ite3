@@ -1,11 +1,5 @@
 <?php
-// Handout 1: The Front Controller & Autoloader
-// This file is the single entry point for the entire application.
-$sessionPath = __DIR__ . '/../storage/sessions';
-if (!is_dir($sessionPath)) {
-    mkdir($sessionPath, 0777, true);
-}
-session_save_path($sessionPath);
+
 session_start(); // Start the session to manage user authentication and flash messages
 
 // Composer Autoloader
@@ -30,12 +24,9 @@ require __DIR__ . '/../app/routes.php'; // This file will define the routes usin
 // 3. Capture the current request
 $uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
 $basePath = trim($_ENV['APP_BASE_PATH'] ?? 'ite3', '/');
-if ($uri === $basePath) {
-    $uri = '';
-} elseif (strpos($uri, $basePath . '/') === 0) {
-    $uri = substr($uri, strlen($basePath) + 1);
+if (!empty($basePath)) {
+    $uri = preg_replace("#^" . preg_quote($basePath) . "/?#", '', $uri);
 }
-$uri = preg_replace('#^public/?#', '', $uri); // Support direct /ite3/public URLs
 
 if ($uri === '' || $uri === 'index.php') {
     $uri = 'home';

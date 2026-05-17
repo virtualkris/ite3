@@ -18,9 +18,9 @@ class Router {
 
     // 3. The Dispatcher: Resolve the incoming request to the appropriate controller action
     public function resolve($uri, $method) {
-        foreach ($this->routes[$method] as $route => $controller) {
+        foreach ($this->routes[$method] ?? [] as $route => $controller) {
             // Handle dynamic parameters in the route (e.g., {id})
-            $pattern = preg_replace('/\{[a-zA-Z0-9_]+\}/', '([a-zA-Z0-9_]+)', $route);
+            $pattern = preg_replace('/\{[a-zA-Z0-9_]+\}/', '([a-zA-Z0-9_-]+)', $route);
             if (preg_match('#^' . $pattern . '$#', $uri, $matches)) {
                 array_shift($matches); // Remove the full match
                 list($controllerClass, $action) = explode('@', $controller);
@@ -40,5 +40,8 @@ class Router {
                 }
             }
         }
+
+        http_response_code(404);
+        echo "404 - Page Not Found";
     }
 }
